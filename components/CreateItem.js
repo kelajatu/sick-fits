@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import Router from "next/router";
-import Form from "./styles/Form";
 import formatMoney from "../lib/formatMoney";
+import Form from "./styles/Form";
 import Error from "./ErrorMessage";
 
-const CREATE_ITEM_MUTATION = gql`
+export const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
     $description: String!
@@ -28,12 +28,13 @@ const CREATE_ITEM_MUTATION = gql`
 
 class CreateItem extends Component {
   state = {
-    title: "Cool Shoes",
-    description: "I love those shoes",
-    image: "dog.jpg",
-    largeImage: "large-dog.jpg",
-    price: 1000
+    title: "",
+    description: "",
+    image: "",
+    largeImage: "",
+    price: 0
   };
+
   handleChange = e => {
     const { name, type, value } = e.target;
     const val = type === "number" ? parseFloat(value) : value;
@@ -119,7 +120,7 @@ class CreateItem extends Component {
                   name="price"
                   placeholder="Price"
                   required
-                  value={this.state.price}
+                  value={this.state.price || ""}
                   onChange={this.handleChange}
                 />
               </label>
@@ -127,6 +128,7 @@ class CreateItem extends Component {
               <label htmlFor="description">
                 Description
                 <textarea
+                  type="text"
                   id="description"
                   name="description"
                   placeholder="Enter A Description"
@@ -145,4 +147,3 @@ class CreateItem extends Component {
 }
 
 export default CreateItem;
-export { CREATE_ITEM_MUTATION };
