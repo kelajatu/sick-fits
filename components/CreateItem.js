@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import Router from "next/router";
-import formatMoney from "../lib/formatMoney";
 import Form from "./styles/Form";
+import formatMoney from "../lib/formatMoney";
 import Error from "./ErrorMessage";
 
-export const CREATE_ITEM_MUTATION = gql`
+const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
     $description: String!
@@ -34,7 +34,6 @@ class CreateItem extends Component {
     largeImage: "",
     price: 0
   };
-
   handleChange = e => {
     const { name, type, value } = e.target;
     const val = type === "number" ? parseFloat(value) : value;
@@ -42,32 +41,30 @@ class CreateItem extends Component {
   };
 
   uploadFile = async e => {
-    console.log("Uploading file...");
     const files = e.target.files;
     const data = new FormData();
     data.append("file", files[0]);
     data.append("upload_preset", "sickfits");
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dbygzsjul/image/upload",
+      "http://api.cloudinary.com/v1_1/dbygzsjul/image/upload",
       {
         method: "POST",
         body: data
       }
     );
     const file = await res.json();
-    console.log(file);
     this.setState({
       image: file.secure_url,
       largeImage: file.eager[0].secure_url
     });
   };
-
   render() {
     return (
       <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
         {(createItem, { loading, error }) => (
           <Form
+            data-test="form"
             onSubmit={async e => {
               e.preventDefault();
               const res = await createItem();
@@ -120,7 +117,7 @@ class CreateItem extends Component {
                   name="price"
                   placeholder="Price"
                   required
-                  value={this.state.price || ""}
+                  value={this.state.price}
                   onChange={this.handleChange}
                 />
               </label>
@@ -128,7 +125,6 @@ class CreateItem extends Component {
               <label htmlFor="description">
                 Description
                 <textarea
-                  type="text"
                   id="description"
                   name="description"
                   placeholder="Enter A Description"
@@ -147,3 +143,4 @@ class CreateItem extends Component {
 }
 
 export default CreateItem;
+export { CREATE_ITEM_MUTATION };
